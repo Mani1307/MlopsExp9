@@ -1,0 +1,43 @@
+name: Diabetes AI CI-CD Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-test-train:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Train AI Model
+        run: |
+          python train.py
+
+      - name: Test AI Model
+        run: |
+          pytest -v test_model.py
+
+      - name: Save Model Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: diabetes-trained-model
+          path: artifacts/diabetes_model.pkl
+
+      - name: Deployment Simulation
+        run: |
+          echo "Model training and testing completed."
+          echo "Deployment stage executed successfully."
